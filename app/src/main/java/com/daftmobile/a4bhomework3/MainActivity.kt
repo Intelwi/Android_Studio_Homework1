@@ -12,7 +12,7 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
-    private val REQUEST_SELECT_CONTACT = 1
+    private val REQUEST_SELECT_EMAIL = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,27 +27,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createIntent(view: View) {
-            // Build the intent
+        // Start an activity for the user to pick a phone number from contacts
         val intent = Intent(Intent.ACTION_PICK).apply {
-            type = ContactsContract.Contacts.CONTENT_TYPE
+            type = ContactsContract.CommonDataKinds.Email.CONTENT_TYPE
         }
         if (intent.resolveActivity(packageManager) != null) {
-            startActivityForResult(intent, REQUEST_SELECT_CONTACT)
+            startActivityForResult(intent, REQUEST_SELECT_EMAIL)
         }
+
     }
 
-    //do pobrania maila
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_SELECT_CONTACT && resultCode == RESULT_OK) {
-            if(data?.data != null) {
-                val contactUri: Uri = data.data
-                val email = EMAIL_RETRIEVER.retrieve(contactUri)
-                val emails = Array<String>(1) { email.toString() }
-                this.createEmail(
-                        emails,
-                        "Wiadomość z pracy domowej"
-                )
-            }
+        if (requestCode == REQUEST_SELECT_EMAIL && resultCode == Activity.RESULT_OK) {
+            // Get the URI and query the content provider for the phone number
+            val contactUri: Uri = data!!.data
+            val email = EMAIL_RETRIEVER.retrieve(contactUri)
+            val emails = Array<String>(1) { email.toString() }
+            this.createEmail(
+                    emails,
+                    "Wiadomość z pracy domowej"
+            )
         }
     }
 
